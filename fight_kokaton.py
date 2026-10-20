@@ -140,6 +140,7 @@ class Bomb:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
 
+#追加1_スコアクラス
 class Score:
     """
 スコアに関するクラス
@@ -171,9 +172,8 @@ def main():
     bombs = []
     for _ in range(NUM_OF_BOMBS):
         bombs.append(Bomb((255, 0, 0), 10))
-
-    beams = []  # ゲーム初期化時にはビームは存在しない
-    score=Score()
+    beams = []  #追加2_ビームを入れるリスト
+    score=Score() #Scoreクラスのインスタンスを生成
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -181,8 +181,9 @@ def main():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-            #     # スペースキー押下でBeamクラスのインスタンス生成
-                beams.append(Beam(bird))           
+            # スペースキー押下でBeamクラスのインスタンス生成
+                beams.append(Beam(bird))
+                #追加2_インスタンスをビームリストに追加          
         screen.blit(bg_img, [0, 0])
 
         for bomb in bombs:
@@ -200,29 +201,30 @@ def main():
             for j, beam in enumerate(beams):
                 if beam is not None:
                     if beam.rct.colliderect(bomb.rct):
-                        beams[j] = None
+                        beams[j] = None #追加2_当たったビームは消える
                         bombs[i] = None
                         bird.change_img(6, screen) #よろこぶこうかとん
-                        score.score += 1
+                        score.score += 1  #爆弾を打ち落としたらスコアを1点加算
                         pg.display.update()
         bombs = [bomb for bomb in bombs if bomb is not None]
 
+        #追加2_画面から出たビームをリストから削除
         for i, beam in enumerate(beams):
             if beam is not None:
                 if check_bound(beam.rct) != (True, True):
                     beams[i] = None
-
-        bombs = [bomb for bomb in bombs if bomb is not None]
+        bombs = [bomb for bomb in bombs if bomb is not None] #追加2_当たった爆弾は消える
         beams = [beam for beam in beams if beam is not None]
         
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
+        #追加2_リストのビームを描画
         for beam in beams:
             beam.update(screen)  
         for bomb in bombs: 
             bomb.update(screen)
 
-        score.update(screen)
+        score.update(screen) #現在のスコアを画面に描画
         
     
         pg.display.update()
